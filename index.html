@@ -1,0 +1,662 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>Kids Story Book Generator (Gemini)</title>
+  <style>
+    :root { --bg:#0b1020; --card:#121a33; --muted:#9fb0ff; --text:#eef1ff; --accent:#7dd3fc; --ok:#34d399; --warn:#fbbf24; --bad:#fb7185; }
+    * { box-sizing:border-box; }
+    body { margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; background:linear-gradient(180deg,#070a14, #0b1020); color:var(--text); }
+    header { padding:18px 16px 10px; position:sticky; top:0; backdrop-filter: blur(10px); background: rgba(11,16,32,.75); border-bottom:1px solid rgba(125,211,252,.15); z-index:5; }
+    header h1 { margin:0; font-size:18px; letter-spacing:.2px; }
+    header p { margin:6px 0 0; color:rgba(238,241,255,.75); font-size:12.5px; line-height:1.35; }
+    main { padding:14px 16px 90px; max-width: 980px; margin:0 auto; }
+    .grid { display:grid; gap:12px; }
+    @media (min-width: 860px){ .grid { grid-template-columns: 360px 1fr; align-items:start; } }
+    .card { background: rgba(18,26,51,.92); border: 1px solid rgba(125,211,252,.18); border-radius:16px; padding:14px; box-shadow: 0 10px 35px rgba(0,0,0,.35); }
+    .card h2 { margin:0 0 10px; font-size:14px; color: rgba(238,241,255,.9); }
+    label { display:block; font-size:12px; color: rgba(238,241,255,.8); margin:10px 0 6px; }
+    input, textarea, select {
+      width:100%; border-radius:12px; border:1px solid rgba(125,211,252,.22);
+      background: rgba(7,10,20,.55); color: var(--text); padding:10px 10px; font-size:14px;
+      outline:none;
+    }
+    textarea { min-height: 80px; resize: vertical; }
+    .row { display:grid; grid-template-columns: 1fr 1fr; gap:10px; }
+    .btns { display:flex; gap:10px; flex-wrap:wrap; margin-top:12px; }
+    button {
+      border:none; border-radius:12px; padding:10px 12px; font-weight:650; cursor:pointer;
+      background: rgba(125,211,252,.18); color: var(--text);
+      border:1px solid rgba(125,211,252,.28);
+    }
+    button.primary { background: rgba(125,211,252,.32); }
+    button.ok { background: rgba(52,211,153,.22); border-color: rgba(52,211,153,.35); }
+    button.warn { background: rgba(251,191,36,.2); border-color: rgba(251,191,36,.35); }
+    button.bad { background: rgba(251,113,133,.18); border-color: rgba(251,113,133,.32); }
+    button:disabled { opacity:.45; cursor:not-allowed; }
+    .status { margin-top:10px; font-size:12.5px; color: rgba(238,241,255,.8); line-height:1.35; }
+    .pill { display:inline-block; padding:4px 8px; border-radius:999px; font-size:11px; border:1px solid rgba(255,255,255,.15); margin-right:6px; }
+    .pill.ok { border-color: rgba(52,211,153,.5); color: rgba(152,255,220,.95); }
+    .pill.warn { border-color: rgba(251,191,36,.5); color: rgba(255,230,170,.95); }
+    .pill.bad { border-color: rgba(251,113,133,.55); color: rgba(255,180,195,.98); }
+
+    .book { display:flex; flex-direction:column; gap:12px; }
+    .pageCard { border:1px solid rgba(125,211,252,.16); border-radius:16px; padding:12px; background: rgba(7,10,20,.35); }
+    .pageTop { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:8px; }
+    .pageTop h3 { margin:0; font-size:13px; }
+    .pageMeta { display:flex; gap:8px; flex-wrap:wrap; }
+    .imgWrap { display:grid; grid-template-columns: 120px 1fr; gap:10px; align-items:start; }
+    @media (max-width: 520px){ .imgWrap { grid-template-columns: 1fr; } }
+    .thumb { width:100%; max-width:220px; border-radius:14px; border:1px solid rgba(125,211,252,.18); background: rgba(0,0,0,.15); aspect-ratio: 4/3; display:flex; align-items:center; justify-content:center; overflow:hidden; }
+    .thumb img { width:100%; height:100%; object-fit:cover; display:block; }
+    .small { font-size:12px; color: rgba(238,241,255,.72); }
+    .footerBar {
+      position: fixed; left:0; right:0; bottom:0;
+      background: rgba(11,16,32,.9); border-top:1px solid rgba(125,211,252,.16);
+      padding:10px 12px; display:flex; gap:10px; align-items:center; justify-content:space-between;
+    }
+    .footerBar .left { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+    .footerBar .right { display:flex; gap:8px; align-items:center; flex-wrap:wrap; justify-content:flex-end; }
+    a { color: var(--accent); }
+  </style>
+</head>
+
+<body>
+<header>
+  <h1>Kids Story Book Generator (Gemini)</h1>
+  <p>Create a 4–12 page story with a cover, editable slide outline, and AI images. Export as a PDF you can save on mobile.</p>
+</header>
+
+<main class="grid">
+  <section class="card">
+    <h2>1) Setup</h2>
+    <label>Gemini API Key (paste here — do NOT hardcode into GitHub)</label>
+    <input id="apiKey" type="password" placeholder="Your Gemini API key (x-goog-api-key)" autocomplete="off" />
+
+    <div class="row">
+      <div>
+        <label>Pages (4–12)</label>
+        <select id="pages">
+          <option>4</option><option>6</option><option>8</option><option selected>10</option><option>12</option>
+        </select>
+      </div>
+      <div>
+        <label>Book Size (for PDF)</label>
+        <select id="bookSize">
+          <option value="8.5x8.5" selected>Square 8.5" × 8.5" (simple)</option>
+          <option value="8x10">Portrait 8" × 10"</option>
+          <option value="A4">A4</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="row">
+      <div>
+        <label>Illustration Aspect Ratio</label>
+        <select id="aspect">
+          <option value="1:1">1:1</option>
+          <option value="4:3" selected>4:3</option>
+          <option value="3:4">3:4</option>
+          <option value="16:9">16:9</option>
+          <option value="9:16">9:16</option>
+        </select>
+      </div>
+      <div>
+        <label>Mode</label>
+        <select id="mode">
+          <option value="color" selected>Colour storybook</option>
+          <option value="coloring">Colouring book (line art, B/W)</option>
+        </select>
+      </div>
+    </div>
+
+    <h2 style="margin-top:14px;">2) Story Inputs</h2>
+
+    <label>Main Character(s)</label>
+    <input id="character" placeholder="e.g., a kind panda who becomes a doctor" />
+
+    <label>Story Setting</label>
+    <input id="setting" placeholder="e.g., a cozy bamboo town, big hospital, snowy swimming arena" />
+
+    <label>Moral / Lesson</label>
+    <input id="moral" placeholder="e.g., kindness helps everyone heal; practice makes champions" />
+
+    <label>Style Notes (optional)</label>
+    <input id="styleNotes" placeholder="e.g., cute children’s book, soft watercolor, consistent character look" />
+
+    <div class="row">
+      <div>
+        <label>Author Name</label>
+        <input id="author" placeholder="e.g., Coach Daniel Phua" />
+      </div>
+      <div>
+        <label>Book Title (optional)</label>
+        <input id="title" placeholder="e.g., Dr. Panda’s Big Heart" />
+      </div>
+    </div>
+
+    <label>Extra Prompt (optional)</label>
+    <textarea id="extraPrompt" placeholder="Anything else? e.g., include a friendship side character, keep language simple for ages 4–7"></textarea>
+
+    <div class="btns">
+      <button class="primary" id="btnOutline">Generate Editable Outline</button>
+      <button class="warn" id="btnImages" disabled>Generate Images</button>
+      <button class="ok" id="btnPDF" disabled>Export PDF</button>
+      <button class="bad" id="btnReset">Reset</button>
+    </div>
+
+    <div class="status" id="status">
+      <span class="pill warn">Tip</span> Paste your Gemini API key, generate outline first, edit text, then generate images.
+    </div>
+    <div class="status small">
+      Uses Gemini REST endpoints for content generation and image generation.  [oai_citation:1‡Google AI for Developers](https://ai.google.dev/gemini-api/docs/image-generation)
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>3) Your Book (editable)</h2>
+    <div id="book" class="book"></div>
+  </section>
+</main>
+
+<div class="footerBar">
+  <div class="left">
+    <span class="pill ok">Mobile-friendly</span>
+    <span class="pill">GitHub Pages-ready</span>
+    <span class="pill">PDF Export</span>
+  </div>
+  <div class="right">
+    <a href="#" id="downloadJson" title="Download your outline as JSON">Download Outline JSON</a>
+  </div>
+</div>
+
+<!-- jsPDF for PDF export -->
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+
+<script>
+/**
+ * Kids Story Book Generator (Gemini)
+ * - Text model: gemini-2.5-flash (outline + page text)
+ * - Image model: gemini-2.5-flash-image (illustrations)
+ *
+ * REST endpoint pattern (from Gemini docs):
+ * POST https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent
+ * Header: x-goog-api-key: YOUR_KEY
+ * JSON body: { contents: [{ parts: [{text:"..."}] }], generationConfig: {...} }
+ */
+
+const TEXT_MODEL  = "gemini-2.5-flash";
+const IMAGE_MODEL = "gemini-2.5-flash-image";
+
+const el = (id) => document.getElementById(id);
+const statusEl = el("status");
+const bookEl = el("book");
+
+let bookState = null; // { meta, cover, pages[] }
+
+function setStatus(type, msg){
+  const pillClass = type === "ok" ? "ok" : type === "bad" ? "bad" : "warn";
+  const label = type === "ok" ? "OK" : type === "bad" ? "Error" : "Info";
+  statusEl.innerHTML = `<span class="pill ${pillClass}">${label}</span> ${msg}`;
+}
+
+function getKey(){
+  const k = el("apiKey").value.trim();
+  if (!k) throw new Error("Please paste your Gemini API key first.");
+  return k;
+}
+
+function getPdfSize(){
+  const v = el("bookSize").value;
+  // jsPDF uses points; 1 inch = 72pt
+  if (v === "8.5x8.5") return { w: 8.5*72, h: 8.5*72 };
+  if (v === "8x10")    return { w: 8*72, h: 10*72 };
+  // A4 in points approx: 595 x 842
+  return { w: 595, h: 842 };
+}
+
+function safeJsonParse(text){
+  // try to extract JSON even if model wraps it
+  const start = text.indexOf("{");
+  const end = text.lastIndexOf("}");
+  if (start >= 0 && end > start){
+    const slice = text.slice(start, end+1);
+    return JSON.parse(slice);
+  }
+  return JSON.parse(text);
+}
+
+async function geminiGenerateText(apiKey, prompt){
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${TEXT_MODEL}:generateContent`;
+  const body = {
+    contents: [{ parts: [{ text: prompt }] }],
+    generationConfig: {
+      temperature: 0.7,
+      maxOutputTokens: 4096
+    }
+  };
+
+  const res = await fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "x-goog-api-key": apiKey
+    },
+    body: JSON.stringify(body)
+  });
+
+  if (!res.ok){
+    const err = await res.text();
+    throw new Error(`Gemini text call failed (${res.status}). ${err}`);
+  }
+  const data = await res.json();
+  const parts = data?.candidates?.[0]?.content?.parts || [];
+  const text = parts.map(p => p.text).filter(Boolean).join("\n");
+  if (!text) throw new Error("No text returned from Gemini.");
+  return text;
+}
+
+async function geminiGenerateImage(apiKey, prompt, aspectRatio){
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${IMAGE_MODEL}:generateContent`;
+
+  // Ask for image-only output + aspect ratio
+  const body = {
+    contents: [{ parts: [{ text: prompt }] }],
+    generationConfig: {
+      responseModalities: ["Image"],
+      imageConfig: { aspectRatio }
+    }
+  };
+
+  const res = await fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "x-goog-api-key": apiKey
+    },
+    body: JSON.stringify(body)
+  });
+
+  if (!res.ok){
+    const err = await res.text();
+    throw new Error(`Gemini image call failed (${res.status}). ${err}`);
+  }
+  const data = await res.json();
+  const parts = data?.candidates?.[0]?.content?.parts || [];
+  const imgPart = parts.find(p => p.inlineData && p.inlineData.data);
+  if (!imgPart) throw new Error("No image returned from Gemini image model.");
+  const b64 = imgPart.inlineData.data;
+  const mime = imgPart.inlineData.mimeType || "image/png";
+  return `data:${mime};base64,${b64}`;
+}
+
+function renderBook(){
+  bookEl.innerHTML = "";
+  if (!bookState){
+    bookEl.innerHTML = `<div class="small">No book yet. Generate an outline to begin.</div>`;
+    return;
+  }
+
+  // Cover card
+  const cover = document.createElement("div");
+  cover.className = "pageCard";
+  cover.innerHTML = `
+    <div class="pageTop">
+      <h3>Cover</h3>
+      <div class="pageMeta">
+        <span class="pill">Title</span>
+        <span class="pill">${escapeHtml(bookState.cover.title || "")}</span>
+      </div>
+    </div>
+    <label>Cover Title</label>
+    <input data-cover="title" value="${escapeAttr(bookState.cover.title || "")}" />
+    <label>Subtitle (optional)</label>
+    <input data-cover="subtitle" value="${escapeAttr(bookState.cover.subtitle || "")}" />
+    <label>Author</label>
+    <input data-cover="author" value="${escapeAttr(bookState.meta.author || "")}" />
+    <label>Cover Image Prompt (editable)</label>
+    <textarea data-cover="imgPrompt">${escapeHtml(bookState.cover.imagePrompt || "")}</textarea>
+
+    <div class="imgWrap" style="margin-top:10px;">
+      <div class="thumb" id="coverThumb">${bookState.cover.imageDataUrl ? `<img src="${bookState.cover.imageDataUrl}" alt="Cover image">` : `<span class="small">No image yet</span>`}</div>
+      <div>
+        <div class="small">Tip: Edit the prompts anytime, then click “Generate Images” again.</div>
+      </div>
+    </div>
+  `;
+  cover.addEventListener("input", (e) => {
+    const t = e.target;
+    if (t.dataset.cover === "title") bookState.cover.title = t.value;
+    if (t.dataset.cover === "subtitle") bookState.cover.subtitle = t.value;
+    if (t.dataset.cover === "author") bookState.meta.author = t.value;
+    if (t.dataset.cover === "imgPrompt") bookState.cover.imagePrompt = t.value;
+    enableButtons();
+  });
+  bookEl.appendChild(cover);
+
+  // Pages
+  bookState.pages.forEach((p, idx) => {
+    const c = document.createElement("div");
+    c.className = "pageCard";
+    c.innerHTML = `
+      <div class="pageTop">
+        <h3>Page ${idx+1}</h3>
+        <div class="pageMeta">
+          <span class="pill">Scene</span>
+          <span class="pill">${escapeHtml((p.sceneTitle || "").slice(0,36))}${(p.sceneTitle||"").length>36?"…":""}</span>
+        </div>
+      </div>
+
+      <label>Scene Title</label>
+      <input data-k="sceneTitle" data-i="${idx}" value="${escapeAttr(p.sceneTitle || "")}" />
+
+      <label>Page Text (short, kid-friendly)</label>
+      <textarea data-k="pageText" data-i="${idx}">${escapeHtml(p.pageText || "")}</textarea>
+
+      <label>Illustration Prompt (editable)</label>
+      <textarea data-k="imagePrompt" data-i="${idx}">${escapeHtml(p.imagePrompt || "")}</textarea>
+
+      <div class="imgWrap" style="margin-top:10px;">
+        <div class="thumb">${p.imageDataUrl ? `<img src="${p.imageDataUrl}" alt="Page ${idx+1} image">` : `<span class="small">No image yet</span>`}</div>
+        <div class="small">
+          Keep the character consistent by using the same keywords (e.g., “round eyes, blue scarf, soft watercolor”).
+        </div>
+      </div>
+    `;
+    c.addEventListener("input", (e) => {
+      const t = e.target;
+      const i = Number(t.dataset.i);
+      const k = t.dataset.k;
+      if (Number.isFinite(i) && k){
+        bookState.pages[i][k] = t.value;
+        enableButtons();
+      }
+    });
+    bookEl.appendChild(c);
+  });
+
+  enableButtons();
+}
+
+function enableButtons(){
+  el("btnImages").disabled = !bookState;
+  const hasAnyImage = bookState && (
+    !!bookState.cover.imageDataUrl ||
+    bookState.pages.some(p => !!p.imageDataUrl)
+  );
+  el("btnPDF").disabled = !bookState || !hasAnyImage;
+}
+
+function escapeHtml(str){
+  return String(str).replace(/[&<>"']/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]));
+}
+function escapeAttr(str){ return escapeHtml(str).replace(/"/g,'&quot;'); }
+
+function buildOutlinePrompt(inputs){
+  const {pages, character, setting, moral, styleNotes, author, title, extraPrompt, mode} = inputs;
+
+  const artMode = mode === "coloring"
+    ? "Colouring book line art: black & white, clean outlines, minimal shading, no grey wash, kid-safe."
+    : "Colour storybook: vibrant but gentle palette, children’s book illustration, soft lighting.";
+
+  return `
+You are a professional children's picture book author + editor.
+Create a complete picture-book plan with a COVER and ${pages} PAGES.
+Return ONLY valid JSON. No markdown.
+
+Rules:
+- Language: Simple English suitable for ages 4–8.
+- Each page text: 1–2 short sentences (max ~25 words).
+- Keep character consistent throughout.
+- Must include moral/lesson naturally (not preachy).
+- Avoid scary or unsafe content.
+
+Inputs:
+- Character(s): ${character}
+- Setting: ${setting}
+- Moral/Lesson: ${moral}
+- Style notes: ${styleNotes || "none"}
+- Author: ${author || "Unknown"}
+- Optional title: ${title || "Generate a great title"}
+- Mode: ${artMode}
+- Extra: ${extraPrompt || "none"}
+
+JSON schema:
+{
+  "meta": { "author": "string", "targetAge": "4-8", "mode": "color|coloring" },
+  "cover": {
+    "title": "string",
+    "subtitle": "string (optional)",
+    "imagePrompt": "string (prompt for cover illustration)"
+  },
+  "pages": [
+    {
+      "sceneTitle": "string",
+      "pageText": "string",
+      "imagePrompt": "string (prompt for page illustration)"
+    }
+  ]
+}
+
+Important:
+- In every imagePrompt, include a short "Character Design Anchor" line like:
+  "Character anchor: ..." to keep it consistent.
+- For coloring mode, ensure prompts ask for line art only.
+`.trim();
+}
+
+function buildDefaultInputs(){
+  return {
+    pages: Number(el("pages").value),
+    character: el("character").value.trim(),
+    setting: el("setting").value.trim(),
+    moral: el("moral").value.trim(),
+    styleNotes: el("styleNotes").value.trim(),
+    author: el("author").value.trim(),
+    title: el("title").value.trim(),
+    extraPrompt: el("extraPrompt").value.trim(),
+    mode: el("mode").value
+  };
+}
+
+async function onGenerateOutline(){
+  try{
+    const apiKey = getKey();
+    const inputs = buildDefaultInputs();
+    if (!inputs.character || !inputs.setting || !inputs.moral){
+      throw new Error("Please fill in at least Character(s), Setting, and Moral/Lesson.");
+    }
+
+    setStatus("warn","Generating outline… (Gemini text)");
+    el("btnOutline").disabled = true;
+
+    const prompt = buildOutlinePrompt(inputs);
+    const raw = await geminiGenerateText(apiKey, prompt);
+
+    const outline = safeJsonParse(raw);
+
+    // Basic validation
+    if (!outline?.pages?.length) throw new Error("Gemini returned an outline but pages are missing.");
+    outline.pages = outline.pages.slice(0, inputs.pages);
+
+    bookState = {
+      meta: { author: outline.meta?.author || inputs.author || "", targetAge: "4-8", mode: inputs.mode },
+      cover: {
+        title: outline.cover?.title || inputs.title || "Untitled Story",
+        subtitle: outline.cover?.subtitle || "",
+        imagePrompt: outline.cover?.imagePrompt || `Cover illustration for "${outline.cover?.title || inputs.title || "Untitled Story"}".`,
+        imageDataUrl: null
+      },
+      pages: outline.pages.map(p => ({
+        sceneTitle: p.sceneTitle || "",
+        pageText: p.pageText || "",
+        imagePrompt: p.imagePrompt || "",
+        imageDataUrl: null
+      }))
+    };
+
+    renderBook();
+    setStatus("ok","Outline ready! Edit any page text/prompts, then tap “Generate Images”.");
+  }catch(err){
+    console.error(err);
+    setStatus("bad", err.message || String(err));
+  }finally{
+    el("btnOutline").disabled = false;
+  }
+}
+
+async function onGenerateImages(){
+  try{
+    const apiKey = getKey();
+    if (!bookState) throw new Error("Generate an outline first.");
+    const aspect = el("aspect").value;
+    const mode = el("mode").value;
+
+    setStatus("warn","Generating images… (this may take a bit)");
+    el("btnImages").disabled = true;
+    el("btnOutline").disabled = true;
+
+    // Cover image
+    if (bookState.cover.imagePrompt){
+      const coverPrompt = `${bookState.cover.imagePrompt}\n\nSafety: children’s illustration, no brands, no copyrighted characters.`;
+      bookState.cover.imageDataUrl = await geminiGenerateImage(apiKey, coverPrompt, aspect);
+      renderBook();
+      setStatus("warn", "Cover done. Generating page images…");
+    }
+
+    // Pages
+    for (let i=0; i<bookState.pages.length; i++){
+      const p = bookState.pages[i];
+      const base = p.imagePrompt || `Illustration for page ${i+1}: ${p.sceneTitle}.`;
+      const styleSafety = mode === "coloring"
+        ? "\nStyle: black & white line art, clean outlines, no shading, no grey."
+        : "\nStyle: children’s book illustration, cohesive character design, gentle palette.";
+      const prompt = `${base}${styleSafety}\nSafety: kid-safe, no brands, no copyrighted characters.`;
+
+      p.imageDataUrl = await geminiGenerateImage(apiKey, prompt, aspect);
+      renderBook();
+      setStatus("warn", `Generated image ${i+1}/${bookState.pages.length}…`);
+    }
+
+    setStatus("ok","All images generated! You can now export to PDF.");
+  }catch(err){
+    console.error(err);
+    setStatus("bad", err.message || String(err));
+  }finally{
+    el("btnImages").disabled = false;
+    el("btnOutline").disabled = false;
+    enableButtons();
+  }
+}
+
+async function onExportPDF(){
+  try{
+    if (!bookState) throw new Error("No book to export.");
+    const { jsPDF } = window.jspdf;
+
+    setStatus("warn","Building PDF…");
+    el("btnPDF").disabled = true;
+
+    const size = getPdfSize();
+    const doc = new jsPDF({
+      unit: "pt",
+      format: [size.w, size.h]
+    });
+
+    // layout
+    const margin = 28;
+    const imgH = size.h * 0.58;
+    const imgW = size.w - margin*2;
+    const textY = margin + imgH + 18;
+
+    // helper to add image
+    async function addPage(imageDataUrl, title, body, footer){
+      // background
+      doc.setFillColor(11,16,32);
+      doc.rect(0,0,size.w,size.h,"F");
+
+      // image
+      if (imageDataUrl){
+        doc.addImage(imageDataUrl, "PNG", margin, margin, imgW, imgH, undefined, "FAST");
+      } else {
+        doc.setDrawColor(160);
+        doc.rect(margin, margin, imgW, imgH);
+      }
+
+      // title
+      doc.setTextColor(238,241,255);
+      doc.setFont("helvetica","bold");
+      doc.setFontSize(18);
+      doc.text(title || "", margin, textY);
+
+      // body
+      doc.setFont("helvetica","normal");
+      doc.setFontSize(12.5);
+      const lines = doc.splitTextToSize(body || "", imgW);
+      doc.text(lines, margin, textY + 18);
+
+      // footer
+      doc.setFontSize(10.5);
+      doc.setTextColor(200,205,230);
+      doc.text(footer || "", margin, size.h - 18);
+    }
+
+    // Cover page
+    const coverTitle = bookState.cover.title || "Untitled Story";
+    const coverSub = bookState.cover.subtitle ? `\n${bookState.cover.subtitle}` : "";
+    const coverFooter = `By ${bookState.meta.author || "Unknown"}`;
+    await addPage(bookState.cover.imageDataUrl, coverTitle, coverSub, coverFooter);
+
+    // Story pages
+    for (let i=0; i<bookState.pages.length; i++){
+      doc.addPage([size.w, size.h], "pt");
+      const p = bookState.pages[i];
+      const footer = `${bookState.cover.title || "Story"} • Page ${i+1}`;
+      await addPage(p.imageDataUrl, p.sceneTitle, p.pageText, footer);
+    }
+
+    const safeName = (bookState.cover.title || "storybook").replace(/[^\w\-]+/g,"_").slice(0,60);
+    doc.save(`${safeName}.pdf`);
+
+    setStatus("ok","PDF saved! Check your phone downloads/files.");
+  }catch(err){
+    console.error(err);
+    setStatus("bad", err.message || String(err));
+  }finally{
+    el("btnPDF").disabled = false;
+    enableButtons();
+  }
+}
+
+function onReset(){
+  bookState = null;
+  bookEl.innerHTML = "";
+  enableButtons();
+  setStatus("warn","Reset done. Fill in inputs and generate a new outline.");
+}
+
+function downloadOutlineJson(){
+  if (!bookState) return;
+  const blob = new Blob([JSON.stringify(bookState, null, 2)], {type:"application/json"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `${(bookState.cover.title||"outline").replace(/[^\w\-]+/g,"_").slice(0,60)}.json`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
+el("btnOutline").addEventListener("click", onGenerateOutline);
+el("btnImages").addEventListener("click", onGenerateImages);
+el("btnPDF").addEventListener("click", onExportPDF);
+el("btnReset").addEventListener("click", onReset);
+el("downloadJson").addEventListener("click", (e)=>{ e.preventDefault(); downloadOutlineJson(); });
+
+renderBook();
+enableButtons();
+</script>
+</body>
+</html>
