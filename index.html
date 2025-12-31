@@ -3,550 +3,905 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <title>Kids Story Book Generator</title>
+  <title>Kids Story Book Generator (Free)</title>
   <style>
-    :root { --bg:#0b1020; --card:#121a33; --text:#eef1ff; --accent:#7dd3fc; }
-    * { box-sizing:border-box; }
-    body { margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      background:linear-gradient(180deg,#070a14, #0b1020); color:var(--text); }
-    header { padding:18px 16px 10px; position:sticky; top:0; backdrop-filter: blur(10px);
-      background: rgba(11,16,32,.75); border-bottom:1px solid rgba(125,211,252,.15); z-index:5; }
-    header h1 { margin:0; font-size:18px; }
-    header p { margin:6px 0 0; color:rgba(238,241,255,.75); font-size:12.5px; line-height:1.35; }
-    main { padding:14px 16px 90px; max-width: 980px; margin:0 auto; }
-    .grid { display:grid; gap:12px; }
-    @media (min-width: 860px){ .grid { grid-template-columns: 360px 1fr; } }
-    .card { background: rgba(18,26,51,.92); border: 1px solid rgba(125,211,252,.18); border-radius:16px;
-      padding:14px; box-shadow: 0 10px 35px rgba(0,0,0,.35); }
-    .card h2 { margin:0 0 10px; font-size:14px; color: rgba(238,241,255,.9); }
-    label { display:block; font-size:12px; color: rgba(238,241,255,.8); margin:10px 0 6px; }
-    input, textarea, select {
-      width:100%; border-radius:12px; border:1px solid rgba(125,211,252,.22);
-      background: rgba(7,10,20,.55); color: var(--text); padding:10px; font-size:14px; outline:none;
+    :root{
+      --bg:#0b1020;
+      --card:#121a33;
+      --muted:#92a0c3;
+      --text:#eaf0ff;
+      --accent:#6ee7ff;
+      --accent2:#a78bfa;
+      --border: rgba(255,255,255,.12);
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --radius: 16px;
     }
-    textarea { min-height: 80px; resize: vertical; }
-    .row { display:grid; grid-template-columns: 1fr 1fr; gap:10px; }
-    .btns { display:flex; gap:10px; flex-wrap:wrap; margin-top:12px; }
-    button {
-      border:none; border-radius:12px; padding:10px 12px; font-weight:650; cursor:pointer;
-      background: rgba(125,211,252,.18); color: var(--text);
-      border:1px solid rgba(125,211,252,.28);
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      background: radial-gradient(900px 500px at 20% 0%, rgba(110,231,255,.15), transparent 60%),
+                  radial-gradient(900px 500px at 80% 0%, rgba(167,139,250,.15), transparent 60%),
+                  var(--bg);
+      color: var(--text);
     }
-    button.primary { background: rgba(125,211,252,.32); }
-    button:disabled { opacity:.45; cursor:not-allowed; }
-    .status { margin-top:10px; font-size:12.5px; color: rgba(238,241,255,.8); line-height:1.35; }
-    .pill { display:inline-block; padding:4px 8px; border-radius:999px; font-size:11px;
-      border:1px solid rgba(255,255,255,.15); margin-right:6px; }
-    .book { display:flex; flex-direction:column; gap:12px; }
-    .pageCard { border:1px solid rgba(125,211,252,.16); border-radius:16px; padding:12px; background: rgba(7,10,20,.35); }
-    .pageTop { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:8px; }
-    .pageTop h3 { margin:0; font-size:13px; }
-    .imgWrap { display:grid; grid-template-columns: 120px 1fr; gap:10px; align-items:start; }
-    @media (max-width: 520px){ .imgWrap { grid-template-columns: 1fr; } }
-    .thumb { width:100%; max-width:220px; border-radius:14px; border:1px solid rgba(125,211,252,.18);
-      background: rgba(0,0,0,.15); aspect-ratio: 4/3; display:flex; align-items:center; justify-content:center; overflow:hidden; }
-    .thumb img { width:100%; height:100%; object-fit:cover; display:block; }
-    .small { font-size:12px; color: rgba(238,241,255,.72); }
-    .footerBar {
-      position: fixed; left:0; right:0; bottom:0;
-      background: rgba(11,16,32,.9); border-top:1px solid rgba(125,211,252,.16);
-      padding:10px 12px; display:flex; gap:10px; align-items:center; justify-content:space-between;
+    header{
+      padding: 18px 16px 10px;
+      position: sticky;
+      top: 0;
+      background: linear-gradient(to bottom, rgba(11,16,32,.92), rgba(11,16,32,.65));
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+      z-index: 10;
     }
-    a { color: var(--accent); }
+    .wrap{max-width:1100px;margin:0 auto;padding:0 12px 24px;}
+    .toprow{display:flex; gap:10px; align-items:center; justify-content:space-between; flex-wrap:wrap;}
+    h1{font-size:18px;margin:0;letter-spacing:.2px;display:flex;align-items:center;gap:10px;}
+    .badge{font-size:12px;padding:4px 10px;border:1px solid var(--border);border-radius:999px;color:var(--muted);background:rgba(255,255,255,.04);}
+    .actions{display:flex; gap:8px; flex-wrap:wrap}
+    button{
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      padding:10px 12px;
+      border-radius: 12px;
+      font-weight: 700;
+      cursor:pointer;
+    }
+    button:hover{border-color: rgba(110,231,255,.35)}
+    button.primary{
+      background: linear-gradient(135deg, rgba(110,231,255,.22), rgba(167,139,250,.20));
+      border-color: rgba(110,231,255,.35);
+    }
+    button.ghost{background: rgba(255,255,255,.03);}
+    main{padding: 14px 0 24px;}
+    .grid{display:grid;grid-template-columns:1fr;gap:12px;}
+    @media(min-width:980px){.grid{grid-template-columns:420px 1fr;}}
+    .card{
+      background: rgba(18,26,51,.85);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .card h2{
+      font-size: 14px;
+      margin:0;
+      padding: 12px 14px;
+      border-bottom:1px solid var(--border);
+      color:#f4f7ff;
+      display:flex; align-items:center; justify-content:space-between;
+      gap:10px;
+    }
+    .card .body{padding:12px 14px;}
+    label{display:block;font-size:12px;color:var(--muted);margin:10px 0 6px;}
+    input, textarea, select{
+      width:100%;
+      background: rgba(255,255,255,.05);
+      border:1px solid var(--border);
+      color: var(--text);
+      padding:10px 10px;
+      border-radius: 12px;
+      outline:none;
+    }
+    textarea{min-height:70px; resize: vertical;}
+    .row{display:flex; gap:10px;}
+    .row > *{flex:1;}
+    .hint{font-size:12px;color:var(--muted);margin-top:8px;line-height:1.35}
+    .pill{
+      display:inline-flex; gap:8px; align-items:center;
+      padding:6px 10px;
+      border:1px solid var(--border);
+      border-radius:999px;
+      background: rgba(255,255,255,.04);
+      color: var(--muted);
+      font-size:12px;
+      white-space:nowrap;
+    }
+    .outlineList{display:flex;flex-direction:column;gap:10px;}
+    details{
+      border:1px solid var(--border);
+      border-radius: 14px;
+      overflow:hidden;
+      background: rgba(255,255,255,.03);
+    }
+    summary{
+      cursor:pointer;
+      padding: 10px 12px;
+      color:#f4f7ff;
+      font-weight: 800;
+      font-size: 13px;
+      display:flex; justify-content:space-between; align-items:center;
+      gap:10px;
+      list-style:none;
+    }
+    summary::-webkit-details-marker{display:none}
+    .detailsBody{padding: 10px 12px 12px; border-top:1px solid var(--border);}
+    .previewWrap{padding: 10px;}
+    .book{
+      background: rgba(255,255,255,.03);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 10px;
+      min-height: 520px;
+    }
+    .pager{
+      display:flex; gap:8px; flex-wrap:wrap; align-items:center; justify-content:space-between;
+      padding: 10px 8px 0;
+    }
+    .pager .left, .pager .right{display:flex; gap:8px; flex-wrap:wrap; align-items:center}
+    .pageLabel{color: var(--muted); font-size:12px;}
+    .pageCanvas{margin-top: 10px; display:flex; justify-content:center;}
+    .page{
+      width: min(880px, 100%);
+      aspect-ratio: 4 / 3;
+      background: #ffffff;
+      color:#0b1020;
+      border-radius: 14px;
+      overflow:hidden;
+      position:relative;
+      box-shadow: 0 10px 24px rgba(0,0,0,.25);
+    }
+    .page .margin{
+      position:absolute; inset: 14px;
+      border-radius: 12px;
+      border: 2px dashed rgba(11,16,32,.12);
+      pointer-events:none;
+    }
+    .page .topbar{
+      position:absolute; left:0; right:0; top:0;
+      padding: 10px 14px;
+      display:flex; justify-content:space-between; align-items:center;
+      font-size: 12px;
+      color: rgba(11,16,32,.65);
+    }
+    .page .content{
+      position:absolute; left: 0; right:0; top: 40px; bottom:0;
+      display:grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap: 12px;
+      padding: 14px;
+    }
+    @media(max-width: 520px){
+      .page .content{grid-template-columns: 1fr; grid-template-rows: .95fr 1.05fr;}
+    }
+    .panel{
+      border-radius: 14px;
+      background: rgba(11,16,32,.04);
+      overflow:hidden;
+      border: 1px solid rgba(11,16,32,.08);
+    }
+    .imgPanel{display:flex; align-items:center; justify-content:center; padding: 10px;}
+    .textPanel{padding: 12px 12px 10px;}
+    .pageTitle{font-weight: 900;font-size: 18px;margin: 0 0 6px;letter-spacing:.2px;}
+    .pageText{margin:0;font-size:14px;line-height:1.45;white-space: pre-wrap;}
+    .footer{
+      position:absolute; left: 14px; right: 14px; bottom: 10px;
+      display:flex; justify-content:space-between;
+      font-size: 11px;
+      color: rgba(11,16,32,.55);
+    }
+    .cover .content{grid-template-columns: 1fr; grid-template-rows: 1fr;}
+    .cover .textPanel{display:flex;flex-direction:column;justify-content:center;align-items:flex-start;gap:10px;}
+    .coverTitle{font-size: 34px; line-height:1.05; margin:0; font-weight: 950;}
+    .coverSub{margin:0; font-size: 14px; color: rgba(11,16,32,.72); font-weight: 800;}
+    .coverTag{
+      display:inline-block;
+      padding:6px 10px;
+      border-radius:999px;
+      background: rgba(11,16,32,.07);
+      border: 1px solid rgba(11,16,32,.10);
+      font-size: 12px;
+      font-weight: 800;
+      color: rgba(11,16,32,.72);
+    }
+    .toast{
+      position: fixed;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: 16px;
+      background: rgba(18,26,51,.95);
+      border:1px solid var(--border);
+      padding: 10px 12px;
+      border-radius: 999px;
+      color: var(--text);
+      font-weight: 800;
+      font-size: 12px;
+      box-shadow: var(--shadow);
+      display:none;
+      z-index: 50;
+    }
+    .printOnly{display:none;}
+    @media print{
+      header, .noPrint {display:none !important;}
+      body{background:#fff;}
+      .wrap{max-width:none; padding:0;}
+      .card{border:none; box-shadow:none;}
+      .printOnly{display:block;}
+      .printPages{display:flex;flex-direction:column;gap:0;}
+      .printPage{
+        page-break-after: always;
+        width: 100%;
+        height: 100vh;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        background:#fff;
+      }
+      .printPage .page{width: min(100%, 1050px);}
+    }
   </style>
 </head>
 
 <body>
-<header>
-  <h1>Kids Story Book Generator</h1>
-  <p>Outline → editable pages → AI images → Export PDF. (API key hidden via Cloudflare Worker)</p>
+<header class="noPrint">
+  <div class="wrap">
+    <div class="toprow">
+      <h1>
+        Kids Story Book Generator
+        <span class="badge">Free mode • No AI • Always works</span>
+      </h1>
+      <div class="actions">
+        <button class="ghost" id="btnSave">Save</button>
+        <button class="ghost" id="btnLoad">Load</button>
+        <button class="ghost" id="btnReset">Reset</button>
+        <button class="primary" id="btnGenerate">Generate Book</button>
+      </div>
+    </div>
+    <div class="hint">
+      Creates a cover + up to 12 pages with <b>consistent character illustrations</b>. Toggle <b>Colouring Book</b> for black/white line art.
+      Export: <b>Print → Save as PDF</b> (best for KDP, Apple Books, Kobo).
+    </div>
+  </div>
 </header>
 
-<main class="grid">
-  <section class="card">
-    <h2>1) Book Settings</h2>
+<main>
+  <div class="wrap">
+    <div class="grid">
 
-    <label>Pages (4–12)</label>
-    <select id="pages">
-      <option>4</option><option>6</option><option>8</option><option selected>10</option><option>12</option>
-    </select>
+      <!-- LEFT -->
+      <section class="card noPrint">
+        <h2>
+          Setup
+          <span class="pill" id="seedPill">Character seed: —</span>
+        </h2>
+        <div class="body">
+          <label>Book Title</label>
+          <input id="title" placeholder="e.g., Dr. Panda Saves the Day" maxlength="80">
 
-    <div class="row">
-      <div>
-        <label>Illustration Aspect Ratio</label>
-        <select id="aspect">
-          <option value="1:1">1:1</option>
-          <option value="4:3" selected>4:3</option>
-          <option value="3:4">3:4</option>
-          <option value="16:9">16:9</option>
-          <option value="9:16">9:16</option>
-        </select>
-      </div>
-      <div>
-        <label>Mode</label>
-        <select id="mode">
-          <option value="color" selected>Colour storybook</option>
-          <option value="coloring">Colouring book (line art, B/W)</option>
-        </select>
-      </div>
+          <div class="row">
+            <div>
+              <label>Author Name</label>
+              <input id="author" placeholder="e.g., Coach Daniel" maxlength="60">
+            </div>
+            <div>
+              <label>Pages (excluding cover)</label>
+              <select id="pages">
+                <option>4</option><option>6</option><option selected>8</option><option>10</option><option>12</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="row">
+            <div>
+              <label>Main Character (Name)</label>
+              <input id="charName" placeholder="e.g., Piko" maxlength="30">
+            </div>
+            <div>
+              <label>Species</label>
+              <select id="species">
+                <option value="panda" selected>Panda</option>
+                <option value="polarbear">Polar Bear</option>
+                <option value="fox">Fox</option>
+                <option value="rabbit">Rabbit</option>
+                <option value="cat">Cat</option>
+              </select>
+            </div>
+          </div>
+
+          <label>Character Traits</label>
+          <input id="traits" placeholder="e.g., kind, brave, curious, helpful" maxlength="120">
+
+          <label>Setting</label>
+          <input id="setting" placeholder="e.g., snowy town, forest clinic, underwater stadium" maxlength="120">
+
+          <label>Moral / Lesson</label>
+          <input id="moral" placeholder="e.g., Help others, and you’ll grow stronger too." maxlength="140">
+
+          <div class="row">
+            <div>
+              <label>Book Type</label>
+              <select id="bookType">
+                <option value="story" selected>Story book</option>
+                <option value="coloring">Colouring book (B/W)</option>
+              </select>
+            </div>
+            <div>
+              <label>Reading Level</label>
+              <select id="level">
+                <option value="toddler">Toddler (very simple)</option>
+                <option value="early" selected>Early reader</option>
+                <option value="kids">Kids (richer)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="row">
+            <div>
+              <label>Theme</label>
+              <select id="theme">
+                <option value="doctor" selected>Becoming a doctor</option>
+                <option value="sports">Swimming champion</option>
+                <option value="friendship">Friendship & kindness</option>
+                <option value="courage">Courage & confidence</option>
+                <option value="honesty">Honesty & trust</option>
+              </select>
+            </div>
+            <div>
+              <label>Style</label>
+              <select id="style">
+                <option value="bright" selected>Bright & cheerful</option>
+                <option value="soft">Soft pastel</option>
+                <option value="night">Starry night</option>
+              </select>
+            </div>
+          </div>
+
+          <label>Extra Prompt (optional)</label>
+          <textarea id="extra" placeholder="Add special request: side characters, funny moments, special objects, etc."></textarea>
+
+          <hr style="border:none;border-top:1px solid var(--border);margin:14px 0;">
+
+          <h2 style="padding:0;margin:0 0 10px;border:none;">Outline (editable)</h2>
+          <div class="outlineList" id="outline"></div>
+
+          <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:12px;">
+            <button class="primary" id="btnApplyEdits">Apply Outline</button>
+            <button id="btnPrint">Print / Save PDF</button>
+          </div>
+
+          <div class="hint">
+            <b>iPhone PDF export:</b> Tap <b>Print</b> → pinch out to preview → Share → <b>Save to Files</b>.
+          </div>
+        </div>
+      </section>
+
+      <!-- RIGHT -->
+      <section class="card">
+        <h2>
+          Preview
+          <span class="pill" id="statusPill">Ready</span>
+        </h2>
+        <div class="previewWrap">
+          <div class="book">
+            <div class="pager noPrint">
+              <div class="left">
+                <button id="btnPrev">◀</button>
+                <button id="btnNext">▶</button>
+                <span class="pageLabel" id="pageLabel">Cover</span>
+              </div>
+              <div class="right">
+                <button id="btnCover">Cover</button>
+              </div>
+            </div>
+            <div class="pageCanvas" id="pageCanvas"></div>
+          </div>
+
+          <!-- Print pages -->
+          <div class="printOnly">
+            <div class="printPages" id="printPages"></div>
+          </div>
+        </div>
+      </section>
+
     </div>
-
-    <div class="row">
-      <div>
-        <label>PDF Size</label>
-        <select id="bookSize">
-          <option value="8.5x8.5" selected>Square 8.5" × 8.5"</option>
-          <option value="8x10">Portrait 8" × 10"</option>
-          <option value="A4">A4</option>
-        </select>
-      </div>
-      <div>
-        <label>Author Name</label>
-        <input id="author" placeholder="e.g., Coach Daniel Phua" />
-      </div>
-    </div>
-
-    <h2 style="margin-top:14px;">2) Story Inputs</h2>
-
-    <label>Main Character(s)</label>
-    <input id="character" placeholder="e.g., a kind panda who becomes a doctor" />
-
-    <label>Story Setting</label>
-    <input id="setting" placeholder="e.g., a cozy bamboo town, big hospital" />
-
-    <label>Moral / Lesson</label>
-    <input id="moral" placeholder="e.g., kindness helps everyone heal" />
-
-    <label>Style Notes (optional)</label>
-    <input id="styleNotes" placeholder="e.g., cute children’s book, soft watercolor, consistent character look" />
-
-    <label>Book Title (optional)</label>
-    <input id="title" placeholder="e.g., Dr. Panda’s Big Heart" />
-
-    <label>Extra Prompt (optional)</label>
-    <textarea id="extraPrompt" placeholder="Anything else? e.g., include a friendship side character, keep language simple for ages 4–7"></textarea>
-
-    <div class="btns">
-      <button class="primary" id="btnOutline">Generate Editable Outline</button>
-      <button id="btnImages" disabled>Generate Images</button>
-      <button id="btnPDF" disabled>Export PDF</button>
-      <button id="btnReset">Reset</button>
-    </div>
-
-    <div class="status" id="status">
-      <span class="pill">Info</span> First generate outline, edit text/prompts, then generate images, then export PDF.
-    </div>
-
-    <div class="small" style="margin-top:10px;">
-      <b>Consistency tip:</b> This app generates a <i>Character Anchor</i> and repeats it in every image prompt.
-    </div>
-  </section>
-
-  <section class="card">
-    <h2>3) Your Book (editable)</h2>
-    <div id="book" class="book"></div>
-  </section>
+  </div>
 </main>
 
-<div class="footerBar">
-  <div class="small">Download outline JSON for backup:</div>
-  <a href="#" id="downloadJson">Download Outline JSON</a>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+<div class="toast" id="toast"></div>
 
 <script>
-/**
- * Worker URL already inserted for you ✅
- */
-const WORKER_BASE_URL = "https://kids-storybook-gemini-proxy.danielphua85.workers.dev";
-
-const el = (id) => document.getElementById(id);
-const statusEl = el("status");
-const bookEl = el("book");
-
-let bookState = null;
-
-function setStatus(type, msg){
-  statusEl.innerHTML = `<span class="pill">${type}</span> ${msg}`;
-}
-
-function getPdfSize(){
-  const v = el("bookSize").value;
-  if (v === "8.5x8.5") return { w: 8.5*72, h: 8.5*72 };
-  if (v === "8x10")    return { w: 8*72, h: 10*72 };
-  return { w: 595, h: 842 };
-}
-
-function safeJsonParse(text){
-  const start = text.indexOf("{");
-  const end = text.lastIndexOf("}");
-  if (start >= 0 && end > start) return JSON.parse(text.slice(start, end+1));
-  return JSON.parse(text);
-}
-
-async function proxyPost(path, body){
-  const res = await fetch(`${WORKER_BASE_URL}${path}`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body)
-  });
-  const txt = await res.text();
-  if (!res.ok) throw new Error(`Proxy error (${res.status}): ${txt}`);
-  return JSON.parse(txt);
-}
-
-async function proxyGenerateText(prompt){
-  const body = {
-    contents: [{ parts: [{ text: prompt }] }],
-    generationConfig: { temperature: 0.7, maxOutputTokens: 4096 }
-  };
-  const data = await proxyPost("/text", body);
-  const parts = data?.candidates?.[0]?.content?.parts || [];
-  const text = parts.map(p => p.text).filter(Boolean).join("\n");
-  if (!text) throw new Error("No text returned from Gemini.");
-  return text;
-}
-
-async function proxyGenerateImage(prompt, aspectRatio){
-  const body = {
-    contents: [{ parts: [{ text: prompt }] }],
-    generationConfig: {
-      responseModalities: ["Image"],
-      imageConfig: { aspectRatio }
+  // ===== Utilities =====
+  function hashString(str){
+    let h = 2166136261;
+    for (let i=0;i<str.length;i++){
+      h ^= str.charCodeAt(i);
+      h = Math.imul(h, 16777619);
     }
-  };
-  const data = await proxyPost("/image", body);
-  const parts = data?.candidates?.[0]?.content?.parts || [];
-  const imgPart = parts.find(p => p.inlineData && p.inlineData.data);
-  if (!imgPart) throw new Error("No image returned from Gemini image model.");
-  const b64 = imgPart.inlineData.data;
-  const mime = imgPart.inlineData.mimeType || "image/png";
-  return `data:${mime};base64,${b64}`;
-}
-
-function buildInputs(){
-  return {
-    pages: Number(el("pages").value),
-    character: el("character").value.trim(),
-    setting: el("setting").value.trim(),
-    moral: el("moral").value.trim(),
-    styleNotes: el("styleNotes").value.trim(),
-    author: el("author").value.trim(),
-    title: el("title").value.trim(),
-    extraPrompt: el("extraPrompt").value.trim(),
-    mode: el("mode").value
-  };
-}
-
-function buildOutlinePrompt(i){
-  const artMode = i.mode === "coloring"
-    ? "Colouring book line art: black & white, clean outlines, no shading, no grey."
-    : "Colour storybook: soft watercolor / children’s book illustration, gentle palette.";
-
-  return `
-You are a professional children's picture book author + editor.
-Create a complete picture-book plan with a COVER and ${i.pages} PAGES.
-Return ONLY valid JSON. No markdown.
-
-Rules:
-- Simple English for ages 4–8.
-- Each page text: 1–2 short sentences (max ~25 words).
-- Keep ONE main character design consistent across all pages.
-- Include the moral naturally (not preachy).
-- No scary/unsafe content.
-
-Inputs:
-- Main character(s): ${i.character}
-- Setting: ${i.setting}
-- Moral: ${i.moral}
-- Style notes: ${i.styleNotes || "none"}
-- Author: ${i.author || "Unknown"}
-- Optional title: ${i.title || "Generate a great title"}
-- Mode: ${artMode}
-- Extra: ${i.extraPrompt || "none"}
-
-You MUST create a "characterAnchor" that acts like a character bible:
-Include species, colors, outfit + 1 signature item, and strict rules "do not change".
-
-JSON schema:
-{
-  "meta": { "author": "string", "targetAge": "4-8", "mode": "color|coloring" },
-  "characterAnchor": "string",
-  "cover": { "title": "string", "subtitle": "string(optional)", "imagePrompt": "string" },
-  "pages": [
-    { "sceneTitle":"string", "pageText":"string", "imagePrompt":"string" }
-  ]
-}
-`.trim();
-}
-
-function escapeHtml(str){
-  return String(str).replace(/[&<>"']/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]));
-}
-function escapeAttr(str){ return escapeHtml(str).replace(/"/g,'&quot;'); }
-
-function enableButtons(){
-  el("btnImages").disabled = !bookState;
-  const hasAnyImage = bookState && (bookState.cover.imageDataUrl || bookState.pages.some(p => p.imageDataUrl));
-  el("btnPDF").disabled = !bookState || !hasAnyImage;
-}
-
-function renderBook(){
-  bookEl.innerHTML = "";
-  if (!bookState){
-    bookEl.innerHTML = `<div class="small">No book yet. Generate an outline to begin.</div>`;
-    return;
+    return (h >>> 0);
+  }
+  function mulberry32(a){
+    return function(){
+      a |= 0; a = a + 0x6D2B79F5 | 0;
+      let t = Math.imul(a ^ a >>> 15, 1 | a);
+      t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    }
+  }
+  function clamp(n,min,max){ return Math.max(min, Math.min(max,n)); }
+  function escapeHtml(s){
+    return String(s ?? "")
+      .replaceAll("&","&amp;")
+      .replaceAll("<","&lt;")
+      .replaceAll(">","&gt;");
+  }
+  function escapeAttr(s){ return escapeHtml(s).replaceAll('"',"&quot;"); }
+  function toast(msg){
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.style.display = 'block';
+    clearTimeout(window.__toastTimer);
+    window.__toastTimer = setTimeout(()=>t.style.display='none', 2000);
   }
 
-  const cover = document.createElement("div");
-  cover.className = "pageCard";
-  cover.innerHTML = `
-    <div class="pageTop"><h3>Cover</h3><div class="small">Character Anchor enforces consistency.</div></div>
+  // ===== State =====
+  const DEFAULT = {
+    title: "The Kind Panda Doctor",
+    author: "Your Name",
+    pages: 8,
+    charName: "Piko",
+    species: "panda",
+    traits: "kind, curious, brave",
+    setting: "a cozy town clinic",
+    moral: "Kindness + practice can help others.",
+    bookType: "story",
+    level: "early",
+    theme: "doctor",
+    style: "bright",
+    extra: "",
+    seed: 0,
+    outline: [],
+  };
+  let state = structuredClone(DEFAULT);
+  let currentIndex = 0; // 0 cover, 1..pages
 
-    <label>Title</label>
-    <input data-cover="title" value="${escapeAttr(bookState.cover.title || "")}" />
+  const LS_KEY = "kids_storybook_free_v1";
 
-    <label>Subtitle (optional)</label>
-    <input data-cover="subtitle" value="${escapeAttr(bookState.cover.subtitle || "")}" />
+  function setStatus(s){ document.getElementById("statusPill").textContent = s; }
 
-    <label>Author</label>
-    <input data-meta="author" value="${escapeAttr(bookState.meta.author || "")}" />
+  // ===== Character SVG (consistent) =====
+  function paletteFromSeed(seed){
+    const r = mulberry32(seed);
+    const hue = Math.floor(r()*360);
+    const accent = `hsl(${hue}, 85%, 55%)`;
+    const accent2 = `hsl(${(hue+40)%360}, 85%, 55%)`;
+    const bg = `hsl(${(hue+200)%360}, 45%, 94%)`;
+    return {accent, accent2, bg};
+  }
 
-    <label>Character Anchor (auto-generated — edit if character changes)</label>
-    <textarea data-meta="anchor">${escapeHtml(bookState.characterAnchor || "")}</textarea>
+  function makeCharacterSVG({species, seed, bookType, outfitTag}){
+    const r = mulberry32(seed + hashString(species + (outfitTag||"")));
+    const isColoring = bookType === "coloring";
 
-    <label>Cover Image Prompt (editable)</label>
-    <textarea data-cover="imgPrompt">${escapeHtml(bookState.cover.imagePrompt || "")}</textarea>
+    const stroke = "#111";
+    const sw = isColoring ? 4 : 2;
+    const fillWhite = "#fff";
+    const fillDark = isColoring ? "#fff" : "#222";
 
-    <div class="imgWrap" style="margin-top:10px;">
-      <div class="thumb">${bookState.cover.imageDataUrl ? `<img src="${bookState.cover.imageDataUrl}" alt="Cover">` : `<span class="small">No cover image yet</span>`}</div>
-      <div class="small">Edit prompts → regenerate images anytime.</div>
-    </div>
-  `;
-  cover.addEventListener("input", (e) => {
-    const t = e.target;
-    if (t.dataset.cover === "title") bookState.cover.title = t.value;
-    if (t.dataset.cover === "subtitle") bookState.cover.subtitle = t.value;
-    if (t.dataset.cover === "imgPrompt") bookState.cover.imagePrompt = t.value;
-    if (t.dataset.meta === "author") bookState.meta.author = t.value;
-    if (t.dataset.meta === "anchor") bookState.characterAnchor = t.value;
-    enableButtons();
-  });
-  bookEl.appendChild(cover);
+    const {accent, accent2, bg} = paletteFromSeed(seed);
+    const cap = isColoring ? "#fff" : accent;
+    const coat = isColoring ? "#fff" : "rgba(255,255,255,.92)";
+    const badge = isColoring ? "#fff" : accent2;
 
-  bookState.pages.forEach((p, idx) => {
-    const c = document.createElement("div");
-    c.className = "pageCard";
-    c.innerHTML = `
-      <div class="pageTop"><h3>Page ${idx+1}</h3><div class="small">${escapeHtml(p.sceneTitle || "")}</div></div>
+    const eyeY = 46 + Math.floor(r()*5);
+    const smile = 70 + Math.floor(r()*10);
 
-      <label>Scene Title</label>
-      <input data-k="sceneTitle" data-i="${idx}" value="${escapeAttr(p.sceneTitle || "")}" />
-
-      <label>Page Text</label>
-      <textarea data-k="pageText" data-i="${idx}">${escapeHtml(p.pageText || "")}</textarea>
-
-      <label>Illustration Prompt</label>
-      <textarea data-k="imagePrompt" data-i="${idx}">${escapeHtml(p.imagePrompt || "")}</textarea>
-
-      <div class="imgWrap" style="margin-top:10px;">
-        <div class="thumb">${p.imageDataUrl ? `<img src="${p.imageDataUrl}" alt="Page ${idx+1}">` : `<span class="small">No image yet</span>`}</div>
-        <div class="small">If character drifts: strengthen Character Anchor (colors/outfit/signature item).</div>
-      </div>
-    `;
-    c.addEventListener("input", (e) => {
-      const t = e.target;
-      const i = Number(t.dataset.i);
-      const k = t.dataset.k;
-      if (Number.isFinite(i) && k) bookState.pages[i][k] = t.value;
-      enableButtons();
-    });
-    bookEl.appendChild(c);
-  });
-
-  enableButtons();
-}
-
-async function onGenerateOutline(){
-  try{
-    const inputs = buildInputs();
-    if (!inputs.character || !inputs.setting || !inputs.moral) throw new Error("Fill: Character(s), Setting, Moral.");
-
-    setStatus("Info", "Generating outline…");
-    el("btnOutline").disabled = true;
-
-    const raw = await proxyGenerateText(buildOutlinePrompt(inputs));
-    const outline = safeJsonParse(raw);
-    if (!outline.pages || !outline.pages.length) throw new Error("Missing pages in outline.");
-
-    bookState = {
-      meta: { author: outline.meta?.author || inputs.author || "", targetAge: "4-8", mode: inputs.mode },
-      characterAnchor: outline.characterAnchor || "",
-      cover: {
-        title: outline.cover?.title || inputs.title || "Untitled Story",
-        subtitle: outline.cover?.subtitle || "",
-        imagePrompt: outline.cover?.imagePrompt || "A beautiful children’s book cover illustration.",
-        imageDataUrl: null
+    const shapes = {
+      panda: {
+        body: `<ellipse cx="140" cy="150" rx="70" ry="60" fill="${fillWhite}" stroke="${stroke}" stroke-width="${sw}"/>`,
+        head: `<circle cx="140" cy="85" r="55" fill="${fillWhite}" stroke="${stroke}" stroke-width="${sw}"/>`,
+        ears: `
+          <circle cx="105" cy="40" r="16" fill="${fillDark}" stroke="${stroke}" stroke-width="${sw}"/>
+          <circle cx="175" cy="40" r="16" fill="${fillDark}" stroke="${stroke}" stroke-width="${sw}"/>
+        `,
+        patches: isColoring ? `
+          <ellipse cx="118" cy="${eyeY}" rx="16" ry="20" fill="#fff" stroke="${stroke}" stroke-width="${sw}"/>
+          <ellipse cx="162" cy="${eyeY}" rx="16" ry="20" fill="#fff" stroke="${stroke}" stroke-width="${sw}"/>
+        ` : `
+          <ellipse cx="118" cy="${eyeY}" rx="16" ry="20" fill="#2a2a2a" opacity=".9"/>
+          <ellipse cx="162" cy="${eyeY}" rx="16" ry="20" fill="#2a2a2a" opacity=".9"/>
+        `,
+        snout: `<ellipse cx="140" cy="72" rx="16" ry="12" fill="${fillWhite}" stroke="${stroke}" stroke-width="${sw}"/>`
       },
-      pages: outline.pages.slice(0, inputs.pages).map(p => ({
-        sceneTitle: p.sceneTitle || "",
-        pageText: p.pageText || "",
-        imagePrompt: p.imagePrompt || "",
-        imageDataUrl: null
-      }))
+      polarbear: {
+        body: `<ellipse cx="140" cy="150" rx="72" ry="62" fill="${fillWhite}" stroke="${stroke}" stroke-width="${sw}"/>`,
+        head: `<circle cx="140" cy="86" r="56" fill="${fillWhite}" stroke="${stroke}" stroke-width="${sw}"/>`,
+        ears: `
+          <circle cx="110" cy="42" r="14" fill="${fillWhite}" stroke="${stroke}" stroke-width="${sw}"/>
+          <circle cx="170" cy="42" r="14" fill="${fillWhite}" stroke="${stroke}" stroke-width="${sw}"/>
+        `,
+        patches: ``,
+        snout: `<ellipse cx="140" cy="74" rx="20" ry="14" fill="${fillWhite}" stroke="${stroke}" stroke-width="${sw}"/>`
+      },
+      fox: {
+        body: `<ellipse cx="140" cy="152" rx="70" ry="58" fill="${isColoring? "#fff": "hsl(22, 90%, 70%)"}" stroke="${stroke}" stroke-width="${sw}"/>`,
+        head: `<path d="M140 25 C95 40, 80 75, 95 110 C110 140, 170 140, 185 110 C200 75, 185 40, 140 25Z"
+                fill="${isColoring? "#fff": "hsl(22, 90%, 70%)"}" stroke="${stroke}" stroke-width="${sw}"/>`,
+        ears: `
+          <path d="M98 42 L78 20 L85 58 Z" fill="${isColoring? "#fff": "hsl(18, 90%, 62%)"}" stroke="${stroke}" stroke-width="${sw}"/>
+          <path d="M182 42 L202 20 L195 58 Z" fill="${isColoring? "#fff": "hsl(18, 90%, 62%)"}" stroke="${stroke}" stroke-width="${sw}"/>
+        `,
+        patches: ``,
+        snout: `<ellipse cx="140" cy="82" rx="18" ry="12" fill="${fillWhite}" stroke="${stroke}" stroke-width="${sw}"/>`
+      },
+      rabbit: {
+        body: `<ellipse cx="140" cy="154" rx="68" ry="56" fill="${fillWhite}" stroke="${stroke}" stroke-width="${sw}"/>`,
+        head: `<circle cx="140" cy="90" r="52" fill="${fillWhite}" stroke="${stroke}" stroke-width="${sw}"/>`,
+        ears: `
+          <ellipse cx="122" cy="28" rx="12" ry="32" fill="${fillWhite}" stroke="${stroke}" stroke-width="${sw}"/>
+          <ellipse cx="158" cy="28" rx="12" ry="32" fill="${fillWhite}" stroke="${stroke}" stroke-width="${sw}"/>
+        `,
+        patches: ``,
+        snout: `<ellipse cx="140" cy="80" rx="16" ry="12" fill="${fillWhite}" stroke="${stroke}" stroke-width="${sw}"/>`
+      },
+      cat: {
+        body: `<ellipse cx="140" cy="152" rx="70" ry="58" fill="${fillWhite}" stroke="${stroke}" stroke-width="${sw}"/>`,
+        head: `<circle cx="140" cy="86" r="54" fill="${fillWhite}" stroke="${stroke}" stroke-width="${sw}"/>`,
+        ears: `
+          <path d="M105 52 L90 28 L118 42 Z" fill="${fillWhite}" stroke="${stroke}" stroke-width="${sw}"/>
+          <path d="M175 52 L190 28 L162 42 Z" fill="${fillWhite}" stroke="${stroke}" stroke-width="${sw}"/>
+        `,
+        patches: ``,
+        snout: `<ellipse cx="140" cy="74" rx="16" ry="12" fill="${fillWhite}" stroke="${stroke}" stroke-width="${sw}"/>`
+      }
     };
 
-    renderBook();
-    setStatus("OK", "Outline ready. Edit → Generate Images.");
-  }catch(err){
-    console.error(err);
-    setStatus("Error", err.message || String(err));
-  }finally{
-    el("btnOutline").disabled = false;
-  }
-}
+    const S = shapes[species] || shapes.panda;
 
-async function onGenerateImages(){
-  try{
-    if (!bookState) throw new Error("Generate outline first.");
-    const aspect = el("aspect").value;
-    const mode = el("mode").value;
-
-    setStatus("Info", "Generating images…");
-    el("btnImages").disabled = true;
-    el("btnOutline").disabled = true;
-
-    const styleSafety = mode === "coloring"
-      ? "Style: black & white line art, clean outlines, no shading."
-      : "Style: children’s book illustration, cohesive character design, gentle palette.";
-
-    const anchor = (bookState.characterAnchor || "").trim();
-    const anchorBlock = anchor ? `Character Anchor (MUST FOLLOW EXACTLY): ${anchor}` : "";
-
-    const coverPrompt = `${anchorBlock}
-${bookState.cover.imagePrompt}
-${styleSafety}
-Rules: keep same character design/outfit/colors. No brands. No copyrighted characters. Kid-safe.`;
-    bookState.cover.imageDataUrl = await proxyGenerateImage(coverPrompt, aspect);
-    renderBook();
-
-    for (let i=0; i<bookState.pages.length; i++){
-      const p = bookState.pages[i];
-      const pagePrompt = `${anchorBlock}
-Scene: ${p.sceneTitle}
-Illustration details: ${p.imagePrompt}
-${styleSafety}
-Rules: keep same character design/outfit/colors/signature item. No brands. No copyrighted characters. Kid-safe.`;
-      p.imageDataUrl = await proxyGenerateImage(pagePrompt, aspect);
-      renderBook();
-      setStatus("Info", `Generated image ${i+1}/${bookState.pages.length}…`);
+    const outfit = outfitTag || state.theme;
+    let outfitSVG = "";
+    if(outfit === "doctor"){
+      outfitSVG = `
+        <path d="M88 120 C110 106, 170 106, 192 120 L180 205 C165 218,115 218,100 205Z"
+          fill="${coat}" stroke="${stroke}" stroke-width="${sw}"/>
+        <circle cx="175" cy="155" r="9" fill="${badge}" stroke="${stroke}" stroke-width="${sw}"/>
+        <rect x="110" y="118" width="60" height="18" rx="8" fill="${isColoring? "#fff": "rgba(255,255,255,.55)"}" stroke="${stroke}" stroke-width="${sw}"/>
+        <rect x="115" y="122" width="20" height="10" rx="5" fill="${isColoring? "#fff": accent}" stroke="${stroke}" stroke-width="${sw}"/>
+        <circle cx="110" cy="110" r="10" fill="${cap}" stroke="${stroke}" stroke-width="${sw}"/>
+        <rect x="100" y="110" width="80" height="22" rx="10" fill="${cap}" stroke="${stroke}" stroke-width="${sw}"/>
+      `;
+    } else if(outfit === "sports"){
+      outfitSVG = `
+        <path d="M92 125 C112 110, 168 110, 188 125 L182 198 C160 216,120 216,98 198Z"
+          fill="${isColoring? "#fff": accent}" stroke="${stroke}" stroke-width="${sw}"/>
+        <circle cx="140" cy="120" r="12" fill="${isColoring? "#fff": "rgba(255,255,255,.35)"}" stroke="${stroke}" stroke-width="${sw}"/>
+      `;
+    } else {
+      outfitSVG = `
+        <path d="M92 125 C112 112, 168 112, 188 125 L182 198 C160 216,120 216,98 198Z"
+          fill="${isColoring? "#fff": "rgba(11,16,32,.08)"}" stroke="${stroke}" stroke-width="${sw}"/>
+      `;
     }
 
-    setStatus("OK", "All images done. Export PDF now.");
-  }catch(err){
-    console.error(err);
-    setStatus("Error", err.message || String(err));
-  }finally{
-    el("btnImages").disabled = false;
-    el("btnOutline").disabled = false;
-    enableButtons();
+    return `
+      <svg width="280" height="260" viewBox="0 0 280 260" xmlns="http://www.w3.org/2000/svg" role="img">
+        <rect x="0" y="0" width="280" height="260" rx="18" fill="${isColoring? "#fff": bg}" />
+        <path d="M20 208 C60 178, 220 178, 260 208" fill="none" stroke="${isColoring? "#111":"rgba(11,16,32,.12)"}" stroke-width="${isColoring? 3:2}"/>
+        ${S.body}
+        ${outfitSVG}
+        ${S.head}
+        ${S.ears}
+        ${S.patches}
+        ${S.snout}
+        <circle cx="122" cy="${eyeY}" r="6" fill="#111"/>
+        <circle cx="158" cy="${eyeY}" r="6" fill="#111"/>
+        <path d="M128 ${smile} C140 ${smile+10}, 152 ${smile+10}, 160 ${smile}" fill="none" stroke="#111" stroke-width="${sw}" stroke-linecap="round"/>
+        <circle cx="140" cy="86" r="3" fill="#111"/>
+        ${species === "cat" ? `
+          <path d="M110 88 L88 82" stroke="#111" stroke-width="${sw}" stroke-linecap="round"/>
+          <path d="M110 94 L88 94" stroke="#111" stroke-width="${sw}" stroke-linecap="round"/>
+          <path d="M170 88 L192 82" stroke="#111" stroke-width="${sw}" stroke-linecap="round"/>
+          <path d="M170 94 L192 94" stroke="#111" stroke-width="${sw}" stroke-linecap="round"/>
+        ` : ""}
+      </svg>
+    `;
   }
-}
 
-async function onExportPDF(){
-  try{
-    if (!bookState) throw new Error("No book to export.");
-    const { jsPDF } = window.jspdf;
+  // ===== Story generator =====
+  function makePlan(){
+    const seedStr = [
+      state.title, state.author, state.charName, state.species, state.traits, state.setting, state.moral, state.theme, state.style
+    ].join("|");
+    state.seed = hashString(seedStr);
+    document.getElementById("seedPill").textContent = "Character seed: " + String(state.seed).slice(0,10);
 
-    setStatus("Info", "Building PDF…");
-    el("btnPDF").disabled = true;
+    const r = mulberry32(state.seed);
+    const pages = Number(state.pages);
 
-    const size = getPdfSize();
-    const doc = new jsPDF({ unit: "pt", format: [size.w, size.h] });
+    const themeBeats = {
+      doctor: ["dreams of helping others","starts learning with a mentor","faces a tricky problem","practices and stays calm","helps someone in need","learns true kindness","celebrates with friends","shares the lesson"],
+      sports: ["loves training","meets a friendly rival","struggles with a setback","learns a smart technique","trains with patience","competes bravely","wins with good sportsmanship","shares the lesson"],
+      friendship:["feels alone at first","meets a new friend","a misunderstanding happens","they talk honestly","they help each other","they build trust","they have fun together","shares the lesson"],
+      courage:["is nervous about something new","tries a small step","falls and learns","asks for help","tries again","does the brave thing","feels proud","shares the lesson"],
+      honesty:["makes a small mistake","hides it at first","feels worried","tells the truth","fixes the problem","earns trust","honesty is strength","shares the lesson"]
+    };
+    const beats = themeBeats[state.theme] || themeBeats.doctor;
 
-    const margin = 28;
-    const imgH = size.h * 0.58;
-    const imgW = size.w - margin*2;
-    const textY = margin + imgH + 18;
+    const levelStyle = {
+      toddler: {sentences: 2},
+      early: {sentences: 3},
+      kids: {sentences: 4},
+    }[state.level] || {sentences: 3};
 
-    function addPage(imageDataUrl, title, body, footer){
-      doc.setFillColor(11,16,32);
-      doc.rect(0,0,size.w,size.h,"F");
+    const moodWords = {
+      bright: ["sunny","sparkly","cheerful","colorful"],
+      soft: ["gentle","cozy","warm","sweet"],
+      night: ["starry","glowing","quiet","magical"]
+    }[state.style] || ["cheerful"];
 
-      if (imageDataUrl){
-        doc.addImage(imageDataUrl, "PNG", margin, margin, imgW, imgH, undefined, "FAST");
+    function shortText(beat, i){
+      const mood = moodWords[Math.floor(r()*moodWords.length)];
+      const name = state.charName || "Piko";
+      const sp = state.species === "polarbear" ? "polar bear" : state.species;
+      const setting = state.setting || "a friendly place";
+      const moral = state.moral || "Be kind and keep trying.";
+
+      const s = [];
+      if(i===1){
+        s.push(`${name} the ${sp} lived in ${setting}. It felt ${mood} today!`);
+        s.push(`${name} was ${state.traits || "kind and curious"}, and had a big dream.`);
+      } else if(i===pages){
+        s.push(`${name} smiled and said, “${moral}”`);
+        s.push(`And that is how ${name} grew stronger, one kind step at a time.`);
       } else {
-        doc.setDrawColor(160);
-        doc.rect(margin, margin, imgW, imgH);
+        const helper = ["a friend","a teacher","a neighbor","a tiny bird"][Math.floor(r()*4)];
+        s.push(`${name} ${beat} with ${helper}.`);
+        s.push(`${name} took a deep breath and tried again.`);
+        if(levelStyle.sentences >= 4) s.push(`Little by little, the dream grew bigger.`);
       }
-
-      doc.setTextColor(238,241,255);
-      doc.setFont("helvetica","bold");
-      doc.setFontSize(18);
-      doc.text(title || "", margin, textY);
-
-      doc.setFont("helvetica","normal");
-      doc.setFontSize(12.5);
-      const lines = doc.splitTextToSize(body || "", imgW);
-      doc.text(lines, margin, textY + 18);
-
-      doc.setFontSize(10.5);
-      doc.setTextColor(200,205,230);
-      doc.text(footer || "", margin, size.h - 18);
+      if(state.extra && r() < 0.22){
+        s.push(`Also: ${state.extra.trim().slice(0,80)}…`);
+      }
+      return s.slice(0, levelStyle.sentences).join(" ");
     }
 
-    const coverTitle = bookState.cover.title || "Untitled Story";
-    const coverSub = bookState.cover.subtitle ? `\n${bookState.cover.subtitle}` : "";
-    addPage(bookState.cover.imageDataUrl, coverTitle, coverSub, `By ${bookState.meta.author || "Unknown"}`);
-
-    for (let i=0; i<bookState.pages.length; i++){
-      doc.addPage([size.w, size.h], "pt");
-      const p = bookState.pages[i];
-      addPage(p.imageDataUrl, p.sceneTitle, p.pageText, `${coverTitle} • Page ${i+1}`);
+    const outline = [];
+    for(let i=1;i<=pages;i++){
+      const beat = beats[(i-1) % beats.length];
+      outline.push({
+        heading: i===pages ? "The Lesson" : `Page ${i}: ${beat[0].toUpperCase()+beat.slice(1)}`,
+        scene: `${state.charName || "Piko"} in a ${state.style} scene: ${beat}`,
+        text: shortText(beat, i)
+      });
     }
-
-    const safeName = (coverTitle || "storybook").replace(/[^\w\-]+/g,"_").slice(0,60);
-    doc.save(`${safeName}.pdf`);
-
-    setStatus("OK", "PDF saved to your phone (Files/Downloads).");
-  }catch(err){
-    console.error(err);
-    setStatus("Error", err.message || String(err));
-  }finally{
-    el("btnPDF").disabled = false;
-    enableButtons();
+    state.outline = outline;
   }
-}
 
-function onReset(){
-  bookState = null;
-  renderBook();
-  enableButtons();
-  setStatus("Info", "Reset done.");
-}
+  // ===== Outline editor =====
+  function buildOutlineEditor(){
+    const wrap = document.getElementById("outline");
+    wrap.innerHTML = "";
+    state.outline.forEach((p, idx)=>{
+      const d = document.createElement("details");
+      d.open = idx < 2;
+      d.innerHTML = `
+        <summary>
+          <span>${idx+1}. ${escapeHtml(p.heading || ("Page "+(idx+1)))}</span>
+          <span class="pill">editable</span>
+        </summary>
+        <div class="detailsBody">
+          <label>Page Heading</label>
+          <input data-k="heading" data-i="${idx}" value="${escapeAttr(p.heading)}" />
+          <label>Scene Notes</label>
+          <input data-k="scene" data-i="${idx}" value="${escapeAttr(p.scene)}" />
+          <label>Page Text</label>
+          <textarea data-k="text" data-i="${idx}">${escapeHtml(p.text)}</textarea>
+        </div>
+      `;
+      wrap.appendChild(d);
+    });
+  }
 
-function downloadOutlineJson(){
-  if (!bookState) return;
-  const blob = new Blob([JSON.stringify(bookState, null, 2)], {type:"application/json"});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = `${(bookState.cover.title||"outline").replace(/[^\w\-]+/g,"_").slice(0,60)}.json`;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  URL.revokeObjectURL(url);
-}
+  function applyOutlineEdits(){
+    const inputs = document.querySelectorAll("#outline input, #outline textarea");
+    inputs.forEach(el=>{
+      const i = Number(el.getAttribute("data-i"));
+      const k = el.getAttribute("data-k");
+      if(!state.outline[i]) state.outline[i] = {heading:"", text:"", scene:""};
+      state.outline[i][k] = el.value;
+    });
+    renderCurrent();
+    toast("Applied ✅");
+  }
 
-el("btnOutline").addEventListener("click", onGenerateOutline);
-el("btnImages").addEventListener("click", onGenerateImages);
-el("btnPDF").addEventListener("click", onExportPDF);
-el("btnReset").addEventListener("click", onReset);
-el("downloadJson").addEventListener("click", (e)=>{ e.preventDefault(); downloadOutlineJson(); });
+  // ===== Rendering =====
+  function renderCover(){
+    const page = document.createElement("div");
+    page.className = "page cover";
+    const palette = paletteFromSeed(state.seed);
+    page.style.background = `linear-gradient(135deg, ${palette.bg}, #ffffff)`;
 
-renderBook();
-enableButtons();
+    page.innerHTML = `
+      <div class="topbar">
+        <span>${escapeHtml(state.bookType==="coloring" ? "Colouring Book" : "Story Book")}</span>
+        <span>${escapeHtml(state.species)} • ${escapeHtml(state.style)}</span>
+      </div>
+      <div class="content">
+        <div class="panel textPanel">
+          <span class="coverTag">${escapeHtml(state.moral || "A gentle lesson")}</span>
+          <h3 class="coverTitle">${escapeHtml(state.title || "Untitled Book")}</h3>
+          <p class="coverSub">By ${escapeHtml(state.author || "Unknown Author")}</p>
+          <p class="coverSub">Starring: <b>${escapeHtml(state.charName || "Piko")}</b> the ${escapeHtml(state.species==="polarbear"?"polar bear":state.species)}</p>
+        </div>
+        <div class="panel imgPanel" style="justify-content:flex-end; align-items:flex-end; padding: 12px;">
+          ${makeCharacterSVG({species: state.species, seed: state.seed, bookType: state.bookType, outfitTag: state.theme})}
+        </div>
+      </div>
+      <div class="footer">
+        <span>${escapeHtml(state.setting || "")}</span>
+        <span>Cover</span>
+      </div>
+      <div class="margin"></div>
+    `;
+    return page;
+  }
+
+  function renderPage(i){
+    const idx = i-1;
+    const p = state.outline[idx] || {heading:"", text:"", scene:""};
+    const page = document.createElement("div");
+    page.className = "page";
+
+    const pal = paletteFromSeed(state.seed);
+    let bg = "#fff";
+    if(state.style==="bright") bg = `linear-gradient(180deg, ${pal.bg}, #fff)`;
+    if(state.style==="soft") bg = `linear-gradient(180deg, hsl(40, 60%, 95%), #fff)`;
+    if(state.style==="night") bg = `linear-gradient(180deg, hsl(230, 55%, 92%), #fff)`;
+    page.style.background = bg;
+
+    page.innerHTML = `
+      <div class="topbar">
+        <span>${escapeHtml(state.title || "Book")}</span>
+        <span>By ${escapeHtml(state.author || "")}</span>
+      </div>
+      <div class="content">
+        <div class="panel textPanel">
+          <h3 class="pageTitle">${escapeHtml(p.heading || ("Page "+i))}</h3>
+          <p class="pageText">${escapeHtml(p.text || "")}</p>
+        </div>
+        <div class="panel imgPanel">
+          ${makeCharacterSVG({species: state.species, seed: state.seed + i*7, bookType: state.bookType, outfitTag: state.theme})}
+        </div>
+      </div>
+      <div class="footer">
+        <span>${escapeHtml(p.scene || "")}</span>
+        <span>${i}</span>
+      </div>
+      <div class="margin"></div>
+    `;
+    return page;
+  }
+
+  function renderCurrent(){
+    const canvas = document.getElementById("pageCanvas");
+    canvas.innerHTML = "";
+    const pageEl = (currentIndex === 0) ? renderCover() : renderPage(currentIndex);
+    canvas.appendChild(pageEl);
+    document.getElementById("pageLabel").textContent =
+      currentIndex === 0 ? "Cover" : `Page ${currentIndex} / ${state.pages}`;
+  }
+
+  function buildPrintPages(){
+    const host = document.getElementById("printPages");
+    host.innerHTML = "";
+    const all = [renderCover(), ...Array.from({length: Number(state.pages)}, (_,k)=>renderPage(k+1))];
+    for(const el of all){
+      const wrapper = document.createElement("div");
+      wrapper.className = "printPage";
+      wrapper.appendChild(el);
+      host.appendChild(wrapper);
+    }
+  }
+
+  // ===== Inputs =====
+  function pullInputs(){
+    state.title = document.getElementById("title").value.trim();
+    state.author = document.getElementById("author").value.trim();
+    state.pages = Number(document.getElementById("pages").value);
+    state.charName = document.getElementById("charName").value.trim();
+    state.species = document.getElementById("species").value;
+    state.traits = document.getElementById("traits").value.trim();
+    state.setting = document.getElementById("setting").value.trim();
+    state.moral = document.getElementById("moral").value.trim();
+    state.bookType = document.getElementById("bookType").value;
+    state.level = document.getElementById("level").value;
+    state.theme = document.getElementById("theme").value;
+    state.style = document.getElementById("style").value;
+    state.extra = document.getElementById("extra").value.trim();
+  }
+  function pushInputs(){
+    document.getElementById("title").value = state.title;
+    document.getElementById("author").value = state.author;
+    document.getElementById("pages").value = String(state.pages);
+    document.getElementById("charName").value = state.charName;
+    document.getElementById("species").value = state.species;
+    document.getElementById("traits").value = state.traits;
+    document.getElementById("setting").value = state.setting;
+    document.getElementById("moral").value = state.moral;
+    document.getElementById("bookType").value = state.bookType;
+    document.getElementById("level").value = state.level;
+    document.getElementById("theme").value = state.theme;
+    document.getElementById("style").value = state.style;
+    document.getElementById("extra").value = state.extra;
+  }
+
+  // ===== Save / Load =====
+  function saveProject(){
+    pullInputs();
+    localStorage.setItem(LS_KEY, JSON.stringify(state));
+    toast("Saved on this device ✅");
+  }
+  function loadProject(){
+    const raw = localStorage.getItem(LS_KEY);
+    if(!raw){ toast("No saved project found."); return; }
+    try{
+      state = JSON.parse(raw);
+      state.pages = clamp(Number(state.pages||8), 4, 12);
+      pushInputs();
+      makePlan();
+      buildOutlineEditor();
+      currentIndex = 0;
+      renderCurrent();
+      toast("Loaded ✅");
+    }catch(e){
+      toast("Load failed.");
+    }
+  }
+  function resetProject(){
+    state = structuredClone(DEFAULT);
+    pushInputs();
+    makePlan();
+    buildOutlineEditor();
+    currentIndex = 0;
+    renderCurrent();
+    toast("Reset ✅");
+  }
+
+  // ===== Events =====
+  function bind(){
+    document.getElementById("btnGenerate").addEventListener("click", ()=>{
+      pullInputs();
+      makePlan();
+      buildOutlineEditor();
+      currentIndex = 0;
+      renderCurrent();
+      setStatus("Generated ✅");
+      toast("Book generated ✅");
+    });
+    document.getElementById("btnApplyEdits").addEventListener("click", ()=>{
+      pullInputs();
+      applyOutlineEdits();
+    });
+    document.getElementById("btnPrev").addEventListener("click", ()=>{
+      currentIndex = Math.max(0, currentIndex-1); renderCurrent();
+    });
+    document.getElementById("btnNext").addEventListener("click", ()=>{
+      currentIndex = Math.min(Number(state.pages), currentIndex+1); renderCurrent();
+    });
+    document.getElementById("btnCover").addEventListener("click", ()=>{
+      currentIndex = 0; renderCurrent();
+    });
+    document.getElementById("btnPrint").addEventListener("click", ()=>{
+      pullInputs();
+      applyOutlineEdits();
+      buildPrintPages();
+      window.print();
+    });
+    document.getElementById("btnSave").addEventListener("click", saveProject);
+    document.getElementById("btnLoad").addEventListener("click", loadProject);
+    document.getElementById("btnReset").addEventListener("click", resetProject);
+  }
+
+  function init(){
+    state = structuredClone(DEFAULT);
+    pushInputs();
+    makePlan();
+    buildOutlineEditor();
+    renderCurrent();
+    bind();
+    setStatus("Ready");
+  }
+  init();
 </script>
 </body>
 </html>
